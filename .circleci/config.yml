@@ -29,14 +29,15 @@ jobs:
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker build -t $IMAGE_NAME .
             docker push $IMAGE_NAME:latest
+
   scan-dockerfile:
     docker:
       - image: docker:stable-git
     steps:
       - checkout
       - run:
-        name: Build image
-        command: docker build -t trivy-ci-test .
+          name: Build image
+          command: docker build -t trivy-ci-test:${CIRCLE_SHA1} .
       - run:
           name: Install trivy
           command: |
@@ -45,7 +46,7 @@ jobs:
 
       - run:
           name: Scan the local image with trivy
-          command: trivy --exit-code 0 --no-progress trivy-ci-test
+          command: trivy --exit-code 0 --no-progress trivy-ci-test:${CIRCLE_SHA1}
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
