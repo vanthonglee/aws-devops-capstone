@@ -26,6 +26,8 @@ workflows:
   say-hello-workflow:
     jobs:
       - say-hello
+  test:
+    jobs:
       - docker/hadolint:
           dockerfiles: ../Dockerfile
           executor-class: medium
