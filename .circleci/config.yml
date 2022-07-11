@@ -3,6 +3,7 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
+  trivy-orb: fifteen5/trivy-orb@1.0.0
 executors:
   docker-publisher:
     environment:
@@ -17,7 +18,7 @@ executors:
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   build-docker-image:
-  build-and-publish:
+  build-and-publish-image-docker:
     executor: docker-publisher
 
     steps:
@@ -29,6 +30,13 @@ jobs:
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker build -t $IMAGE_NAME .
             docker push $IMAGE_NAME:latest
+  scan-dockerfile:
+    executor: docker/docker
+    steps:
+      - checkout
+      - run:
+        name: Build image
+        command: docker build -t trivy-ci-test:${CIRCLE_SHA1} .
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -40,4 +48,5 @@ workflows:
           hadolint-tag: 2.2.0-debian
           ignore-rules: "DL4005,DL3008"
           trusted-registries: "docker.io"
-      - build-and-publish
+      - trivy/scan:
+          args: "--no-progress --exit-code 1 image $IMAGE_NAME"
