@@ -4,7 +4,7 @@ version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
   jobs:
-    lint-dockerfile:
+    lint:
       executor: docker/machine
       steps:
         - checkout
@@ -35,5 +35,5 @@ workflows:
   default:
     jobs:
       - say-hello
-      - lint-dockerfile
+      - lint
       - build-docker-image
