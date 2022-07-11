@@ -3,14 +3,7 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
-  jobs:
-    lint:
-      executor: docker/machine
-      steps:
-        - checkout
-        - docker/dockerlint:
-            dockerfile: Dockerfile
-            treat-warnings-as-errors: true
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -26,7 +19,13 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
-
+  lint-dockerfile:
+    docker/hadolint:
+      dockerfiles: Dockerfile
+      executor-class: medium
+      hadolint-tag: 2.2.0-debian
+      ignore-rules: "DL4005,DL3008"
+      trusted-registries: "docker.io"
   build-docker-image:
 
 # Invoke jobs via workflows
@@ -35,5 +34,10 @@ workflows:
   default:
     jobs:
       - say-hello
-      - lint
+      - docker/hadolint:
+          dockerfiles: Dockerfile
+          executor-class: medium
+          hadolint-tag: 2.2.0-debian
+          ignore-rules: "DL4005,DL3008"
+          trusted-registries: "docker.io"
       - build-docker-image
