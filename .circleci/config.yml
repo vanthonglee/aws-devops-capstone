@@ -3,7 +3,7 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
-  trivy-orb: fifteen5/trivy-orb@1.0.0
+  trivy: fifteen5/trivy@1.0.0
 executors:
   docker-publisher:
     environment:
