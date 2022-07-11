@@ -12,4 +12,4 @@ COPY code/frontend /opt/app
 
 RUN npm install --dev && npm run build
 
-CMD [ "npm", "start" ]
+CMD ["npm", "start"]
