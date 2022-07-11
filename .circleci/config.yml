@@ -30,7 +30,8 @@ jobs:
             docker build -t $IMAGE_NAME .
             docker push $IMAGE_NAME:latest
   scan-dockerfile:
-    executor: docker/docker
+    docker:
+      - image: docker:stable-git
     steps:
       - checkout
       - run:
