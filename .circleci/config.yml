@@ -7,30 +7,18 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+  build-docker-image:
+  lint-dockerfile:
+    executor: docker/machine
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-  build-docker-image:
-
+      - docker/dockerlint:
+          dockerfile: Dockerfile
+          treat-warnings-as-errors: true
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   default:
     jobs:
-      - say-hello
-      - docker/hadolint:
-          dockerfiles: Dockerfile
-          executor-class: medium
-          hadolint-tag: 2.2.0-debian
-          ignore-rules: "DL4005,DL3008"
-          trusted-registries: "docker.io"
+      - lint-dockerfile
       # - build-docker-image
