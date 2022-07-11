@@ -51,3 +51,4 @@ workflows:
       - build-and-publish-image-docker
       - trivy/scan:
           args: "--no-progress --exit-code 1 image $IMAGE_NAME"
+          requires: [build-and-publish-image-docker]
