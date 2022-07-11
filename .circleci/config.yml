@@ -3,7 +3,6 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
-  trivy: fifteen5/trivy@1.0.0
 executors:
   docker-publisher:
     environment:
@@ -30,13 +29,22 @@ jobs:
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker build -t $IMAGE_NAME .
             docker push $IMAGE_NAME:latest
-  # scan-dockerfile:
-  #   executor: docker/docker
-  #   steps:
-  #     - checkout
-  #     - run:
-  #       name: Build image
-  #       command: docker build -t trivy-ci-test:${CIRCLE_SHA1} .
+  scan-dockerfile:
+    executor: docker/docker
+    steps:
+      - checkout
+      - run:
+        name: Build image
+        command: docker build -t trivy-ci-test:${CIRCLE_SHA1} .
+      - run:
+          name: Install trivy
+          command: |
+            apk add --update-cache --upgrade curl
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s
+
+      - run:
+          name: Scan the local image with trivy
+          command: trivy --exit-code 0 --no-progress trivy-ci-test:${CIRCLE_SHA1}
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -49,6 +57,5 @@ workflows:
           ignore-rules: "DL4005,DL3008"
           trusted-registries: "docker.io"
       - build-and-publish-image-docker
-      - trivy/scan:
-          args: "--no-progress --exit-code 1 image $IMAGE_NAME"
+      - scan-dockerfile:
           requires: [build-and-publish-image-docker]
