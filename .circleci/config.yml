@@ -3,22 +3,41 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
-
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: thonglevan131/uda-aws-devops-capstone
+    docker: # Each job requires specifying an executor
+      # (either docker, macos, or machine), see
+      - image: circleci/node:latest
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   build-docker-image:
-  lint-dockerfile:
-    executor: docker/machine
+  build-and-publish:
+    executor: docker-publisher
+
     steps:
       - checkout
-      - docker/dockerlint:
-          dockerfile: Dockerfile
-          treat-warnings-as-errors: true
+      - setup_remote_docker
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker build -t $IMAGE_NAME .
+            docker push $IMAGE_NAME:latest
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   default:
     jobs:
-      - lint-dockerfile
-      # - build-docker-image
+      - docker/hadolint:
+          dockerfiles: Dockerfile
+          executor-class: medium
+          hadolint-tag: 2.2.0-debian
+          ignore-rules: "DL4005,DL3008"
+          trusted-registries: "docker.io"
+      - build-and-publish
