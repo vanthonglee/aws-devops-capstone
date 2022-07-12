@@ -50,7 +50,7 @@ jobs:
             sudo apt-get install trivy
       - run:
           name: Scan the local image with trivy
-          command: trivy --exit-code 0 --no-progress $IMAGE_NAME
+          command: trivy $IMAGE_NAME
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
