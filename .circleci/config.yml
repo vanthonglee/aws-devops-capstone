@@ -35,8 +35,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          command: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
       - run:
           name: Build image
           command: docker build -t $IMAGE_NAME .
@@ -61,5 +60,5 @@ workflows:
       #     ignore-rules: "DL4005,DL3008"
       #     trusted-registries: "docker.io"
       # - build-and-publish-image-docker
-      - scan-dockerfile:
-          # requires: [build-and-publish-image-docker]
+      - scan-dockerfile
+        # requires: [build-and-publish-image-docker]
