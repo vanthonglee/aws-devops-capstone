@@ -42,17 +42,13 @@ jobs:
       - run:
           name: Install trivy
           command: |
-            sudo apt-get install wget apt-transport-https gnupg lsb-release
-            wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-            echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-            sudo apt-get update
-            sudo apt-get install trivy
-            trivy --help
-
+            sudo apt update
+            sudo apt upgrade
+            sudo apt install curl
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.29.2
       - run:
           name: Scan the local image with trivy
-          command: |
-            trivy $IMAGE_NAME
+          command: trivy --exit-code 0 --no-progress $IMAGE_NAME
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
