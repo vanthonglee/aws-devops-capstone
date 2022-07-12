@@ -47,10 +47,12 @@ jobs:
             echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
             sudo apt-get update
             sudo apt-get install trivy
+            trivy --help
 
       - run:
           name: Scan the local image with trivy
-          command: trivy --exit-code 0 --no-progress $IMAGE_NAME
+          command: |
+            trivy $IMAGE_NAME
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
