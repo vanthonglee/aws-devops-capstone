@@ -35,7 +35,8 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - run:
+          command: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
       - run:
           name: Build image
           command: docker build -t $IMAGE_NAME .
