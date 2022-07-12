@@ -37,7 +37,7 @@ jobs:
       - checkout
       - run:
           name: Build image
-          command: docker build -t trivy-ci-test:${CIRCLE_SHA1} .
+          command: docker build -t trivy-ci-test .
       - run:
           name: Install trivy
           command: |
@@ -46,7 +46,7 @@ jobs:
 
       - run:
           name: Scan the local image with trivy
-          command: trivy --exit-code 0 --no-progress trivy-ci-test:${CIRCLE_SHA1}
+          command: trivy --exit-code 0 --no-progress trivy-ci-test
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
