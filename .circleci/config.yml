@@ -31,7 +31,8 @@ jobs:
             docker push $IMAGE_NAME:latest
 
   scan-dockerfile:
-    executor: docker-publisher
+    docker:
+      - image: cimg/base:2022.03
     steps:
       - checkout
       - setup_remote_docker
@@ -42,10 +43,7 @@ jobs:
       - run:
           name: Install trivy
           command: |
-            sudo apt update
-            sudo apt upgrade
-            sudo apt install curl
-            sudo curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.29.2
+            sudo apt-get update && sudo apt-get install -y trivy
       - run:
           name: Scan the local image with trivy
           command: trivy --exit-code 0 --no-progress $IMAGE_NAME
