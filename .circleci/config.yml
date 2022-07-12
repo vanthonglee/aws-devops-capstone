@@ -45,7 +45,7 @@ jobs:
             sudo apt update
             sudo apt upgrade
             sudo apt install curl
-            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.29.2
+            sudo curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.29.2
       - run:
           name: Scan the local image with trivy
           command: trivy --exit-code 0 --no-progress $IMAGE_NAME
