@@ -3,34 +3,61 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
-
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: thonglevan131/uda-aws-devops-capstone
+    docker: # Each job requires specifying an executor
+      # (either docker, macos, or machine), see
+      - image: circleci/node:latest
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  build-docker-image:
+  build-and-publish-image-docker:
+    executor: docker-publisher
+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker build -t $IMAGE_NAME .
+            docker push $IMAGE_NAME:latest
+
+  scan-dockerfile:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: docker:stable-git
     steps:
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Build image
+          command: docker build -t trivy-ci-test:${CIRCLE_SHA1} .
+      - run:
+          name: Install trivy
+          command: |
+            apk add --update-cache --upgrade curl
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s
 
+      - run:
+          name: Scan the local image with trivy
+          command: trivy --exit-code 0 --no-progress trivy-ci-test:${CIRCLE_SHA1}
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
-  test:
+  default:
     jobs:
       - docker/hadolint:
-          dockerfiles: ../Dockerfile
+          dockerfiles: Dockerfile
           executor-class: medium
           hadolint-tag: 2.2.0-debian
           ignore-rules: "DL4005,DL3008"
           trusted-registries: "docker.io"
+      - build-and-publish-image-docker
+      - scan-dockerfile:
+          requires: [build-and-publish-image-docker]
