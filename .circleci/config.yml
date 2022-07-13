@@ -16,10 +16,24 @@ executors:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  build-docker-image:
+  build-frontend:
+    docker:
+      - image: cimg/node:13.14.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Build front-end
+          command: |
+            cd frontend
+            npm install
+            npm run build
+      - save_cache:
+          paths: [code/frontend/node_modules]
+          key: frontend-build
   build-and-publish-image-docker:
     executor: docker-publisher
-
     steps:
       - checkout
       - setup_remote_docker
@@ -29,8 +43,9 @@ jobs:
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker build -t $IMAGE_NAME .
             docker push $IMAGE_NAME:latest
-
-  scan-dockerfile:
+      - restore_cache:
+          keys: [frontend-build]
+  scan-dockerimage:
     docker:
       - image: cimg/base:2022.03
     steps:
@@ -51,6 +66,10 @@ jobs:
       - run:
           name: Scan the local image with trivy
           command: trivy image $IMAGE_NAME
+  deploy-to-eks:
+    docker:
+      - image: cimg/base:2022.03
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -62,6 +81,9 @@ workflows:
           hadolint-tag: 2.2.0-debian
           ignore-rules: "DL4005,DL3008"
           trusted-registries: "docker.io"
-      - build-and-publish-image-docker
-      - scan-dockerfile:
+      - build-frontend:
+          requires: [docker/hadolint]
+      - build-and-publish-image-docker:
+          requires: [build-frontend]
+      - scan-dockerimage:
           requires: [build-and-publish-image-docker]
