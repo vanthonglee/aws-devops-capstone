@@ -18,7 +18,7 @@ executors:
 jobs:
   build-frontend:
     docker:
-      - image: cimg/node:13.14.0
+      - image: cimg/node:18.4.0
     steps:
       - checkout
       - restore_cache:
