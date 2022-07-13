@@ -10,4 +10,4 @@ eksctl create cluster \
 --nodes-min=1 \
 --nodes-max=3
 
-eksctl create cluster --name=capstone-georgelee --region=us-east-2
+eksctl create cluster --name=capstone-georgelee-cluster --region=us-east-1
