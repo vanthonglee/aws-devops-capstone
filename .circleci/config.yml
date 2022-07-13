@@ -66,9 +66,9 @@ jobs:
       - run:
           name: Scan the local image with trivy
           command: trivy image $IMAGE_NAME
-  deploy-to-eks:
-    docker:
-      - image: cimg/base:2022.03
+  # deploy-to-eks:
+  #   docker:
+  #     - image: cimg/base:2022.03
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
