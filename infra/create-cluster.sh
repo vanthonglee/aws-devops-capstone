@@ -10,4 +10,10 @@ eksctl create cluster \
 --nodes-min=1 \
 --nodes-max=3
 
-eksctl create cluster --name=capstone-georgelee-cluster --region=us-east-1
+eksctl create cluster   
+
+aws eks describe-cluster --name capstone-georgelee-cluster --query cluster.identity.oidc.issuer --output text
+
+https://oidc.eks.us-east-1.amazonaws.com/id/9A6D21BF28C145600EF4F839A6FABE4F
+
+aws eks update-kubeconfig --region us-east-1 --name capstone-georgelee-clusterkubectl get svc
