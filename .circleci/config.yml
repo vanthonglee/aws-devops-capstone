@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            cd frontend
+            cd code/frontend
             npm install
             npm run build
       - save_cache:
@@ -82,9 +82,8 @@ workflows:
           hadolint-tag: 2.2.0-debian
           ignore-rules: "DL4005,DL3008"
           trusted-registries: "docker.io"
-      - build-frontend:
-          requires: [docker/hadolint]
+      - build-frontend
       - build-and-publish-image-docker:
-          requires: [build-frontend]
+          requires: [docker/hadolint, build-frontend]
       - scan-dockerimage:
           requires: [build-and-publish-image-docker]
