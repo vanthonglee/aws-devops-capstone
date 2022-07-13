@@ -58,14 +58,15 @@ jobs:
       - run:
           name: Install trivy
           command: |
-            sudo apt-get install wget apt-transport-https gnupg lsb-release
-            wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-            echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-            sudo apt-get update
-            sudo apt-get install trivy
+            # sudo apt-get install wget apt-transport-https gnupg lsb-release
+            # wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+            # echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+            # sudo apt-get update
+            # sudo apt-get install trivy
       - run:
           name: Scan the local image with trivy
-          command: trivy image $IMAGE_NAME
+          # command: trivy image $IMAGE_NAME
+          command: docker scan $IMAGE_NAME
   # deploy-to-eks:
   #   docker:
   #     - image: cimg/base:2022.03
