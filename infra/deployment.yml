@@ -22,7 +22,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-        - name: udacity
+        - name: capstone-frontend
           image: thonglevan131/uda-aws-devops-capstone:latest
           ports:
             - containerPort: 3000

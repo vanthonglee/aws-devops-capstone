@@ -50,18 +50,18 @@ jobs:
             sudo apt-get install trivy
       - run:
           name: Scan the local image with trivy
-          command: trivy image --exit-code 1 $IMAGE_NAME
+          command: trivy image $IMAGE_NAME
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   default:
     jobs:
-      # - docker/hadolint:
-      #     dockerfiles: Dockerfile
-      #     executor-class: medium
-      #     hadolint-tag: 2.2.0-debian
-      #     ignore-rules: "DL4005,DL3008"
-      #     trusted-registries: "docker.io"
-      # - build-and-publish-image-docker
-      - scan-dockerfile
-        # requires: [build-and-publish-image-docker]
+      - docker/hadolint:
+          dockerfiles: Dockerfile
+          executor-class: medium
+          hadolint-tag: 2.2.0-debian
+          ignore-rules: "DL4005,DL3008"
+          trusted-registries: "docker.io"
+      - build-and-publish-image-docker
+      - scan-dockerfile:
+          requires: [build-and-publish-image-docker]
