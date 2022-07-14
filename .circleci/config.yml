@@ -37,7 +37,6 @@ jobs:
           key: frontend-build
   build-and-publish-image-docker:
     docker:
-    docker:
       - image: 'cimg/base:stable'
     steps:
       - checkout
