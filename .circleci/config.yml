@@ -116,6 +116,7 @@ jobs:
     steps:
       - checkout
       - install-dependencies
+      - run: echo ${AWS_CLI_ACCESS_KEY_ID}
       - run: |
           aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID} \
             --profile ${AWS_CLI_PROFILE_NAME} 
