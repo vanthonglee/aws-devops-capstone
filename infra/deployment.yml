@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       app: capstone-app-georgelee
+  replicas: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
