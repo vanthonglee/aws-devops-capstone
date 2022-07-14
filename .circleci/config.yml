@@ -110,11 +110,13 @@ jobs:
             kubectl get services
           name: Test cluster
   deploy-to-eks:
-    executor: aws-cli/default
+    docker:
+      - image: "cimg/base:stable"
     steps:
       - checkout
       - install-dependencies
-      - kubernetes/install-kubectl
+      - run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+      - run: kubectl get nodes
       - run: echo ${AWS_CLI_ACCESS_KEY_ID}
       - run: |
           export 
