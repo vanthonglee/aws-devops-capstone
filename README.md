@@ -54,8 +54,8 @@ $ kubectl get svc,po,deploy
 
 # Todo in future
 
-[ ] Automate K8S Deployment
+- [ ] Automate K8S Deployment
 
-[ ] Add monitoring
+- [ ] Add monitoring
 
-[ ] Load Testing
+- [ ] Load Testing
