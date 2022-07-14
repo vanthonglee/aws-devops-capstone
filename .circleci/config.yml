@@ -117,9 +117,10 @@ jobs:
       - kubernetes/install-kubectl
       - run: echo ${AWS_CLI_ACCESS_KEY_ID}
       - run: |
-          aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID} --profile ${AWS_CLI_PROFILE_NAME}
+          export 
+          aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID}
       - run: |
-          aws configure set aws_secret_access_key ${AWS_CLI_SECRET_ACCESS_KEY} --profile ${AWS_CLI_PROFILE_NAME}
+          aws configure set aws_secret_access_key ${AWS_CLI_SECRET_ACCESS_KEY}
       - run: |
           aws configure set default.region us-east-1
       - run: |
