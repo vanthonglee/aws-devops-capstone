@@ -52,3 +52,10 @@ $ kubectl apply -f infra/deployment.yml
 $ kubectl get svc,po,deploy
 ```
 
+# Todo in future
+
+[ ] Automate K8S Deployment
+
+[ ] Add monitoring
+
+[ ] Load Testing
