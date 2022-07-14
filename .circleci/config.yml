@@ -111,7 +111,7 @@ jobs:
           name: Test cluster
   deploy-to-eks:
     docker:
-      - image: python:3.7-alpine3.16
+      - image: ubuntu:latest
     steps:
       - checkout
       - install-dependencies
