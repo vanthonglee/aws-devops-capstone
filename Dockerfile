@@ -6,8 +6,7 @@ ENV NODE_ENV production
 
 COPY code/frontend/package*.json ./
 
-RUN 
-npm ci
+RUN npm ci
 
 COPY code/frontend /opt/app
 

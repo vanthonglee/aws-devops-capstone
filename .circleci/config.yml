@@ -31,6 +31,22 @@ commands:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  lint-frontend:
+    docker:
+      - image: cimg/node:18.4.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Build front-end
+          command: |
+            cd code/frontend
+            npm install
+            npm run lint
+      - save_cache:
+          paths: [code/frontend/node_modules]
+          key: frontend-build
   build-frontend:
     docker:
       - image: cimg/node:18.4.0
@@ -89,13 +105,15 @@ jobs:
 workflows:
   default:
     jobs:
+      - lint-frontend
       - docker/hadolint:
           dockerfiles: Dockerfile
           executor-class: medium
           hadolint-tag: 2.2.0-debian
           ignore-rules: "DL4005,DL3008"
           trusted-registries: "docker.io"
-      - build-frontend
+      - build-frontend:
+          requires: [lint-frontend]
       - build-and-publish-image-docker:
           requires: [docker/hadolint, build-frontend]
       - scan-dockerimage:
