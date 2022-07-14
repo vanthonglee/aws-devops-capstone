@@ -116,6 +116,8 @@ jobs:
       - checkout
       - install-dependencies
       - run: docker --version
+      - run: sudo service docker start
+      - run: sudo ls -la /var/run/docker.sock
       - run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
       - run: k3d cluster create mycluster
       - run: kubectl get nodes
