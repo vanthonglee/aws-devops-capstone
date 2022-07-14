@@ -111,7 +111,7 @@ jobs:
           name: Test cluster
   deploy-to-eks:
     docker:
-      - image: ubuntu:latest
+      - image: "cimg/base:stable"
     steps:
       - checkout
       - install-dependencies
