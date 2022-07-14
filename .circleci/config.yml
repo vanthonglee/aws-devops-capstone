@@ -116,6 +116,7 @@ jobs:
       - checkout
       - install-dependencies
       - run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+      - run: k3d cluster create mycluster
       - run: kubectl get nodes
       - run: echo ${AWS_CLI_ACCESS_KEY_ID}
       - run: |
