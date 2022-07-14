@@ -126,10 +126,7 @@ jobs:
       - run: |
           aws configure list
       - run: aws eks update-kubeconfig --name capstone-georgelee-cluster --region us-east-1
-      - kubernetes/create-or-update-resource:
-          get-rollout-status: true
-          resource-file-path: infra/deployment.yaml
-          show-kubectl-command: true
+      - run: kubeclt get nodes -A
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
