@@ -16,6 +16,21 @@ executors:
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
+
+commands:
+  install-dependencies:
+    steps:
+      - run:
+          name: Installing necessary packages
+          command: |
+            sudo apt update
+            sudo apt install -y tar gzip curl software-properties-common
+      - run:
+          name: Installing aws-cli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -80,8 +95,16 @@ jobs:
           Name of the EKS cluster
         type: string
     steps:
+      - install-dependencies
       - kubernetes/install:
           kubectl-version: v1.22.0
+      - run: |
+          aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID} \
+            --profile ${AWS_CLI_PROFILE_NAME} 
+          aws configure set aws_secret_access_key ${AWS_CLI_SECRET_ACCESS_KEY} \
+            --profile ${AWS_CLI_PROFILE_NAME}
+      - run: >-
+          aws eks update-kubeconfig --name capstone-georgelee-cluster --region us-east-1
       - aws-eks/update-kubeconfig-with-authenticator:
           cluster-name: << parameters.cluster-name >>
       - run:
@@ -92,6 +115,7 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
+      - install-dependencies
       - run: |
           aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID} \
             --profile ${AWS_CLI_PROFILE_NAME} 
