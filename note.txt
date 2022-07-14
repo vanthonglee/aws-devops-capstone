@@ -1,0 +1,4 @@
+Run manually
+1. run ./infra/create-cluster.sh to create new cluster 
+2. (optional) aws eks update-kubeconfig --name capstone-georgelee-cluster --region us-east-1
+3. kubectl apply -f infra/deployment.yml

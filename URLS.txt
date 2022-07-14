@@ -1,1 +1,3 @@
 GITHUB URL - https://github.com/vanthonglee/aws-devops-capstone
+
+URL show External Access to Frontend app in Kubernetes: http://frontend.vanthonglee.com

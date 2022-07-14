@@ -3,9 +3,6 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
-  aws-eks: circleci/aws-eks@2.2.0
-  kubernetes: circleci/kubernetes@1.3
-  aws-cli: circleci/aws-cli@3.1
 executors:
   docker-publisher:
     environment:
@@ -73,7 +70,7 @@ jobs:
       - run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
       - run:
           name: Build image
-          command: docker build -t $IMAGE_NAME .
+          command: docker build -t ${IMAGE_NAME}:v2 .
       - run:
           name: Install trivy
           command: |
@@ -86,76 +83,20 @@ jobs:
           name: Scan the local image with trivy
           # command: trivy image $IMAGE_NAME
           command: docker scan $IMAGE_NAME
-  test-cluster:
-    docker:
-      - image: "cimg/python:3.10"
-    parameters:
-      cluster-name:
-        description: |
-          Name of the EKS cluster
-        type: string
-    steps:
-      - install-dependencies
-      - run: |
-          aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID} --profile ${AWS_CLI_PROFILE_NAME} 
-          aws configure set aws_secret_access_key ${AWS_CLI_SECRET_ACCESS_KEY} --profile ${AWS_CLI_PROFILE_NAME}
-      - kubernetes/install:
-          kubectl-version: v1.22.0
-      - run: >-
-          aws eks update-kubeconfig --name capstone-georgelee-cluster --region us-east-1
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: << parameters.cluster-name >>
-      - run:
-          command: |
-            kubectl get services
-          name: Test cluster
-  deploy-to-eks:
-    docker:
-      - image: "cimg/base:stable"
-    steps:
-      - checkout
-      - install-dependencies
-      - run:
-          name: intall docker
-          command: |
-            sudo apt-get remove docker docker-engine docker.io
-            sudo apt-get update
-            sudo apt install docker.io
-            sudo snap install docker
-            docker --version
-      - run: docker --version
-      - run: sudo service docker start
-      - run: sudo ls -la /var/run/docker.sock
-      - run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-      - run: k3d cluster create mycluster
-      - run: kubectl get nodes
-      - run: echo ${AWS_CLI_ACCESS_KEY_ID}
-      - run: |
-          export 
-          aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID}
-      - run: |
-          aws configure set aws_secret_access_key ${AWS_CLI_SECRET_ACCESS_KEY}
-      - run: |
-          aws configure set default.region us-east-1
-      - run: |
-          aws configure list
-      - run: aws eks update-kubeconfig --name capstone-georgelee-cluster --region us-east-1
-      - run: kubeclt get nodes -A
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   default:
     jobs:
-      # - docker/hadolint:
-      #     dockerfiles: Dockerfile
-      #     executor-class: medium
-      #     hadolint-tag: 2.2.0-debian
-      #     ignore-rules: "DL4005,DL3008"
-      #     trusted-registries: "docker.io"
-      # - build-frontend
-      # - build-and-publish-image-docker:
-      #     requires: [docker/hadolint, build-frontend]
-      # - scan-dockerimage:
-      #     requires: [build-and-publish-image-docker]
-      - deploy-to-eks
+      - docker/hadolint:
+          dockerfiles: Dockerfile
+          executor-class: medium
+          hadolint-tag: 2.2.0-debian
+          ignore-rules: "DL4005,DL3008"
+          trusted-registries: "docker.io"
+      - build-frontend
+      - build-and-publish-image-docker:
+          requires: [docker/hadolint, build-frontend]
+      - scan-dockerimage:
+          requires: [build-and-publish-image-docker]
