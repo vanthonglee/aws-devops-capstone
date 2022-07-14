@@ -111,10 +111,18 @@ jobs:
           name: Test cluster
   deploy-to-eks:
     docker:
-      - image: "cimg/base:stable"
+      - image: python:3.7-alpine3.16
     steps:
       - checkout
       - install-dependencies
+      - run:
+          name: intall docker
+          command: |
+            sudo apt-get remove docker docker-engine docker.io
+            sudo apt-get update
+            sudo apt install docker.io
+            sudo snap install docker
+            docker --version
       - run: docker --version
       - run: sudo service docker start
       - run: sudo ls -la /var/run/docker.sock
@@ -150,6 +158,4 @@ workflows:
       #     requires: [docker/hadolint, build-frontend]
       # - scan-dockerimage:
       #     requires: [build-and-publish-image-docker]
-      # - test-cluster:
-      #     cluster-name: capstone-georgelee-cluster
       - deploy-to-eks
