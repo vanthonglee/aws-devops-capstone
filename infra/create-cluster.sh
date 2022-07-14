@@ -9,3 +9,6 @@ eksctl create cluster \
 --nodes-max=5 \
 --node-type t2.medium \
 --asg-access 
+
+
+aws eks update-kubeconfig --name capstone-georgelee-cluster --region us-east-1
