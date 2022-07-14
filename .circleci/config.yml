@@ -37,7 +37,7 @@ jobs:
           key: frontend-build
   build-and-publish-image-docker:
     docker:
-      - image: 'cimg/base:stable'
+      - image: "cimg/base:stable"
     steps:
       - checkout
       - setup_remote_docker
@@ -51,8 +51,7 @@ jobs:
           keys: [frontend-build]
   scan-dockerimage:
     docker:
-    docker:
-      - image: 'cimg/base:stable'
+      - image: "cimg/base:stable"
     steps:
       - checkout
       - setup_remote_docker
@@ -74,7 +73,7 @@ jobs:
           command: docker scan $IMAGE_NAME
   test-cluster:
     docker:
-      - image: 'cimg/python:3.10'
+      - image: "cimg/python:3.10"
     parameters:
       cluster-name:
         description: |
@@ -97,7 +96,7 @@ jobs:
           aws configure set aws_access_key_id ${AWS_CLI_ACCESS_KEY_ID} \
             --profile ${AWS_CLI_PROFILE_NAME} 
           aws configure set aws_secret_access_key ${AWS_CLI_SECRET_ACCESS_KEY} \
-            --profile ${AWS_CLI_PROFILE_NAME} 
+            --profile ${AWS_CLI_PROFILE_NAME}
       - run: >-
           aws eks update-kubeconfig --name capstone-georgelee-cluster --region us-east-1
       - kubernetes/install-kubectl
@@ -123,6 +122,6 @@ workflows:
       #     requires: [docker/hadolint, build-frontend]
       # - scan-dockerimage:
       #     requires: [build-and-publish-image-docker]
-      - test-cluster: 
+      - test-cluster:
           cluster-name: capstone-georgelee-cluster
       - deploy-to-eks
