@@ -141,7 +141,7 @@ workflows:
           cluster-name: capstone-georgelee-cluster
       - aws-eks/update-container-image:
           cluster-name: capstone-georgelee-cluster
-          container-image-updates: "uda-aws-devops-capstone=thonglevan131/uda-aws-devops-capstone:latest"
+          container-image-updates: "capstone-frontend=thonglevan131/uda-aws-devops-capstone:latest"
           post-steps:
             - kubernetes/delete-resource:
                 resource-names: deployment/capstone-app-georgelee
