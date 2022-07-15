@@ -145,7 +145,7 @@ workflows:
           post-steps:
             - kubernetes/delete-resource:
                 resource-names: deployment/capstone-app-georgelee
-                resource-types: deployment
+                # resource-types: deployment
                 wait: true
           requires:
             - create-deployment
