@@ -116,7 +116,7 @@ jobs:
           install-kubectl: true
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
-          resource-file-path: infra/deployment.yaml
+          resource-file-path: infra/deployment.yml
           resource-name: deployment/frontend-deployment
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
