@@ -3,8 +3,8 @@
 version: 2.1
 orbs:
   docker: circleci/docker@2.1.2
-  aws-eks: circleci/aws-eks@2.2.0
-  kubernetes: circleci/kubernetes@1.3.0
+  aws-eks: circleci/aws-eks@<<pipeline.parameters.dev-orb-version>>
+  kubernetes: circleci/kubernetes@1.3
 executors:
   docker-publisher:
     environment:
@@ -102,7 +102,8 @@ jobs:
           # command: trivy image $IMAGE_NAME
           command: docker scan $IMAGE_NAME
   create-deployment:
-    executor: aws-eks/python3
+    docker:
+      - image: "cimg/python:3.10"
     parameters:
       cluster-name:
         description: |
@@ -136,25 +137,16 @@ workflows:
       # - scan-dockerimage:
       #     requires: [build-and-publish-image-docker]
 
-      - aws-eks/create-cluster:
-          cluster-name: capstone-georgelee-cluster
       - create-deployment:
           cluster-name: capstone-georgelee-cluster
-          requires:
-            - aws-eks/create-cluster
       - aws-eks/update-container-image:
           cluster-name: capstone-georgelee-cluster
           container-image-updates: "deployment=thonglevan131/uda-aws-devops-capstone:latest"
           post-steps:
             - kubernetes/delete-resource:
-                resource-names: frontend-deployment
+                resource-names: capstone-app-georgelee
                 resource-types: deployment
                 wait: true
-          record: true
           requires:
             - create-deployment
-          resource-name: deployment/nginx-deployment
-      - aws-eks/delete-cluster:
-          cluster-name: capstone-georgelee-cluster
-          requires:
-            - aws-eks/update-container-image
+          resource-name: capstone-app-georgelee
