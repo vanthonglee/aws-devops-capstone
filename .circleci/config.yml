@@ -92,15 +92,15 @@ jobs:
       - run:
           name: Install trivy
           command: |
-            # sudo apt-get install wget apt-transport-https gnupg lsb-release
-            # wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-            # echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-            # sudo apt-get update
-            # sudo apt-get install trivy
+            sudo apt-get install wget apt-transport-https gnupg lsb-release
+            wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+            echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+            sudo apt-get update
+            sudo apt-get install trivy
       - run:
           name: Scan the local image with trivy
-          # command: trivy image $IMAGE_NAME
-          command: docker scan $IMAGE_NAME
+          command: trivy image $IMAGE_NAME
+          # command: docker scan $IMAGE_NAME
   create-deployment:
     docker:
       - image: "cimg/python:3.10"
@@ -117,7 +117,7 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: infra/deployment.yml
-          resource-name: deployment/frontend-deployment
+          resource-name: deployment/capstone-app-georgelee
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
