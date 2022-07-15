@@ -101,7 +101,7 @@ jobs:
           name: Scan the local image with trivy
           # command: trivy image $IMAGE_NAME
           command: docker scan $IMAGE_NAME
-  deploy_eks:
+  create-deployment:
     executor: aws-eks/python3
     parameters:
       cluster-name:
@@ -136,5 +136,19 @@ workflows:
       #     requires: [docker/hadolint, build-frontend]
       # - scan-dockerimage:
       #     requires: [build-and-publish-image-docker]
-      - deploy_eks:
+      - aws-eks/create-cluster:
           cluster-name: capstone-georgelee-cluster
+      - create-deployment:
+          cluster-name: capstone-georgelee-cluster
+          requires:
+            - aws-eks/create-cluster
+      - aws-eks/update-container-image:
+          cluster-name: capstone-georgelee-cluster
+          resource-name: "deployment/frontend-deployment"
+          container-image-updates: "thonglevan131/uda-aws-devops-capstone=thonglevan131/uda-aws-devops-capstone:latest"
+          requires:
+            - create-deployment
+      - aws-eks/delete-cluster:
+          cluster-name: capstone-georgelee-cluster
+          requires:
+            - aws-eks/update-container-image
