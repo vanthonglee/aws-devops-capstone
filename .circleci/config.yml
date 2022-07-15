@@ -117,7 +117,7 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: infra/deployment.yml
-          resource-name: capstone-app-georgelee
+          resource-name: deployment/capstone-app-georgelee
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
