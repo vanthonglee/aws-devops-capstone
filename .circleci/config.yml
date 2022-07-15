@@ -123,30 +123,24 @@ jobs:
 workflows:
   default:
     jobs:
-      # - lint-frontend
-      # - docker/hadolint:
-      #     dockerfiles: Dockerfile
-      #     executor-class: medium
-      #     hadolint-tag: 2.2.0-debian
-      #     ignore-rules: "DL4005,DL3008"
-      #     trusted-registries: "docker.io"
-      # - build-frontend:
-      #     requires: [lint-frontend]
-      # - build-and-publish-image-docker:
-      #     requires: [docker/hadolint, build-frontend]
-      # - scan-dockerimage:
-      #     requires: [build-and-publish-image-docker]
-
+      - lint-frontend
+      - docker/hadolint:
+          dockerfiles: Dockerfile
+          executor-class: medium
+          hadolint-tag: 2.2.0-debian
+          ignore-rules: "DL4005,DL3008"
+          trusted-registries: "docker.io"
+      - build-frontend:
+          requires: [lint-frontend]
+      - build-and-publish-image-docker:
+          requires: [docker/hadolint, build-frontend]
+      - scan-dockerimage:
+          requires: [build-and-publish-image-docker]
       - create-deployment:
           cluster-name: capstone-georgelee-cluster
+          requires: [scan-dockerimage]
       - aws-eks/update-container-image:
           cluster-name: capstone-georgelee-cluster
           container-image-updates: "capstone-frontend=thonglevan131/uda-aws-devops-capstone:latest"
-          # post-steps:
-          #   - kubernetes/delete-resource:
-          #       resource-names: deployment/capstone-app-georgelee
-          #       # resource-types: deployment
-          #       wait: true
-          requires:
-            - create-deployment
           resource-name: deployment/capstone-app-georgelee
+          requires: [create-deployment]
