@@ -149,4 +149,4 @@ workflows:
                 wait: true
           requires:
             - create-deployment
-          resource-name: capstone-app-georgelee
+          resource-name: deployment/capstone-app-georgelee
