@@ -144,7 +144,7 @@ workflows:
           container-image-updates: "thonglevan131/uda-aws-devops-capstone:latest"
           post-steps:
             - kubernetes/delete-resource:
-                resource-names: capstone-app-georgelee
+                resource-names: deployment/capstone-app-georgelee
                 resource-types: deployment
                 wait: true
           requires:
