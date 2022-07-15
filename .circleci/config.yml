@@ -136,12 +136,9 @@ workflows:
       #     requires: [docker/hadolint, build-frontend]
       # - scan-dockerimage:
       #     requires: [build-and-publish-image-docker]
-      - aws-eks/create-cluster:
-          cluster-name: capstone-georgelee-cluster
+
       - create-deployment:
           cluster-name: capstone-georgelee-cluster
-          requires:
-            - aws-eks/create-cluster
       - aws-eks/update-container-image:
           cluster-name: capstone-georgelee-cluster
           resource-name: "deployment/frontend-deployment"
