@@ -1,7 +1,7 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/vanthonglee/aws-devops-capstone/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/vanthonglee/aws-devops-capstone/tree/main)
 
 # aws-devops-capstone
-@ George Lee
+@ Van Thong (George) Lee
 
 # Scope The project
 * Linting, Checking security issue, building image, deployment
